@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>냥이 스탑워치</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #fff8f0 0%, #ffeedd 100%);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* ── 고양이 몸체 ── */
+    .cat-wrapper {
+      position: relative;
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 귀 */
+    .ears {
+      display: flex;
+      justify-content: space-between;
+      width: 260px;
+      margin-bottom: -18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .ear {
+      width: 0;
+      height: 0;
+      border-left:  42px solid transparent;
+      border-right: 42px solid transparent;
+      border-bottom: 72px solid #f5c842;
+      filter: drop-shadow(0 -2px 4px rgba(0,0,0,0.1));
+    }
+
+    .ear::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left:  26px solid transparent;
+      border-right: 26px solid transparent;
+      border-bottom: 48px solid #ffb6c1;
+      top: 18px;
+      left: -26px;
+    }
+
+    /* 얼굴 */
+    .cat-face {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle at 40% 35%, #fffde7 0%, #f5c842 55%, #e6a800 100%);
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(230,168,0,0.35), inset 0 -6px 16px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    /* 흰 털 패치 */
+    .cat-face::before {
+      content: '';
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 160px;
+      height: 120px;
+      background: radial-gradient(ellipse, #fffde7 60%, transparent 100%);
+      border-radius: 50%;
+    }
+
+    /* 흰 이마 패치 */
+    .cat-face::after {
+      content: '';
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 70px;
+      background: radial-gradient(ellipse, rgba(255,255,255,0.5) 60%, transparent 100%);
+      border-radius: 50%;
+    }
+
+    /* 눈 */
+    .eyes {
+      display: flex;
+      gap: 38px;
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .eye {
+      width: 52px;
+      height: 56px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2), inset 0 2px 4px rgba(0,0,0,0.05);
+      position: relative;
+      animation: blink 4s infinite;
+    }
+
+    .eye .pupil {
+      width: 30px;
+      height: 36px;
+      background: radial-gradient(circle at 35% 30%, #555 0%, #111 60%, #000 100%);
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .eye .pupil::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 5px;
+      left: 5px;
+    }
+
+    @keyframes blink {
+      0%, 90%, 100% { transform: scaleY(1); }
+      94%, 96%      { transform: scaleY(0.07); }
+    }
+
+    /* 코 */
+    .nose {
+      width: 0;
+      height: 0;
+      border-left:  9px solid transparent;
+      border-right: 9px solid transparent;
+      border-top:   10px solid #f08080;
+      margin-bottom: 2px;
+      position: relative;
+      z-index: 3;
+    }
+
+    /* 입 */
+    .mouth {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 3;
+    }
+
+    .mouth svg {
+      width: 44px;
+      height: 20px;
+    }
+
+    /* 수염 */
+    .whiskers {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      transform: translateY(18px);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .whisker-left, .whisker-right {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .whisker-left  { left: 12px; align-items: flex-start; }
+    .whisker-right { right: 12px; align-items: flex-end; }
+
+    .whisker {
+      height: 2px;
+      background: rgba(100,70,20,0.35);
+      border-radius: 2px;
+    }
+
+    .whisker-left  .whisker:nth-child(1) { width: 58px; transform: rotate(-8deg); }
+    .whisker-left  .whisker:nth-child(2) { width: 62px; }
+    .whisker-left  .whisker:nth-child(3) { width: 58px; transform: rotate(8deg); }
+    .whisker-right .whisker:nth-child(1) { width: 58px; transform: rotate(8deg); }
+    .whisker-right .whisker:nth-child(2) { width: 62px; }
+    .whisker-right .whisker:nth-child(3) { width: 58px; transform: rotate(-8deg); }
+
+    /* 시계 디스플레이 */
+    .display-area {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 4;
+    }
+
+    .display {
+      font-size: 36px;
+      font-weight: 700;
+      color: #5a3800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+      white-space: nowrap;
+    }
+
+    /* 꼬리 */
+    .tail {
+      width: 24px;
+      height: 100px;
+      background: linear-gradient(to bottom, #f5c842, #e6a800);
+      border-radius: 0 0 40px 40px;
+      margin-top: -6px;
+      transform-origin: top center;
+      animation: wag 2s ease-in-out infinite;
+      box-shadow: 2px 4px 8px rgba(0,0,0,0.15);
+      position: relative;
+      z-index: 1;
+    }
+
+    .tail::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 36px;
+      height: 36px;
+      background: radial-gradient(circle, #fffde7 40%, #f5c842 100%);
+      border-radius: 50%;
+    }
+
+    @keyframes wag {
+      0%   { transform: rotate(-20deg); }
+      50%  { transform: rotate(20deg); }
+      100% { transform: rotate(-20deg); }
+    }
+
+    /* 버튼 */
+    .buttons {
+      display: flex;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    button {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+
+    button:active { transform: scale(0.94); }
+
+    #startBtn { background: #f5c842; color: #5a3800; min-width: 100px; }
+    #startBtn:hover { background: #e6a800; }
+    #startBtn.running { background: #f08080; color: #fff; }
+    #startBtn.running:hover { background: #e05555; }
+
+    #lapBtn { background: #fff; color: #888; border: 2px solid #eee; }
+    #lapBtn:hover:not(:disabled) { background: #f5f5f5; }
+    #lapBtn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    #resetBtn { background: #fff; color: #888; border: 2px solid #eee; }
+    #resetBtn:hover { background: #f5f5f5; }
+
+    /* 랩 목록 */
+    .laps {
+      width: 320px;
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #f5c842 transparent;
+    }
+
+    .laps::-webkit-scrollbar { width: 3px; }
+    .laps::-webkit-scrollbar-thumb { background: #f5c842; border-radius: 2px; }
+
+    .lap-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 4px;
+      border-bottom: 1px solid #fde68a;
+      font-size: 13px;
+      color: #a07020;
+      animation: drop 0.18s ease;
+    }
+
+    .lap-item .lap-num { color: #c49a20; min-width: 44px; }
+    .lap-item .lap-split { font-variant-numeric: tabular-nums; font-weight: 600; }
+    .lap-item .lap-total { font-variant-numeric: tabular-nums; color: #d4a800; min-width: 80px; text-align: right; }
+    .lap-item.fastest .lap-split { color: #22c55e; }
+    .lap-item.slowest  .lap-split { color: #f08080; }
+
+    @keyframes drop {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .title {
+      font-size: 14px;
+      color: #c49a20;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="title">🐱 냥이 스탑워치</div>
+
+  <div class="cat-wrapper">
+    <!-- 귀 -->
+    <div class="ears">
+      <div class="ear"></div>
+      <div class="ear"></div>
+    </div>
+
+    <!-- 얼굴 -->
+    <div class="cat-face">
+      <!-- 눈 -->
+      <div class="eyes">
+        <div class="eye"><div class="pupil"></div></div>
+        <div class="eye"><div class="pupil"></div></div>
+      </div>
+      <!-- 코 -->
+      <div class="nose"></div>
+      <!-- 입 -->
+      <div class="mouth">
+        <svg viewBox="0 0 44 20" fill="none">
+          <path d="M22 4 Q14 14 6 10" stroke="#c06060" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+          <path d="M22 4 Q30 14 38 10" stroke="#c06060" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <!-- 수염 -->
+      <div class="whiskers">
+        <div class="whisker-left">
+          <div class="whisker"></div>
+          <div class="whisker"></div>
+          <div class="whisker"></div>
+        </div>
+        <div class="whisker-right">
+          <div class="whisker"></div>
+          <div class="whisker"></div>
+          <div class="whisker"></div>
+        </div>
+      </div>
+      <!-- 시계 -->
+      <div class="display-area">
+        <div class="display" id="display">00:00.00</div>
+      </div>
+    </div>
+
+    <!-- 꼬리 -->
+    <div class="tail"></div>
+  </div>
+
+  <!-- 버튼 -->
+  <div class="buttons">
+    <button id="lapBtn" disabled>랩</button>
+    <button id="startBtn">시작</button>
+    <button id="resetBtn">초기화</button>
+  </div>
+
+  <!-- 랩 기록 -->
+  <div class="laps" id="laps"></div>
+
+  <script>
+    let startTime = 0, elapsed = 0, interval = null, running = false;
+    let laps = [], lastLap = 0;
+
+    const display  = document.getElementById('display');
+    const startBtn = document.getElementById('startBtn');
+    const lapBtn   = document.getElementById('lapBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const lapsEl   = document.getElementById('laps');
+
+    function fmt(ms) {
+      const cs = Math.floor(ms / 10) % 100;
+      const s  = Math.floor(ms / 1000) % 60;
+      const m  = Math.floor(ms / 60000) % 60;
+      const h  = Math.floor(ms / 3600000);
+      const pad = n => String(n).padStart(2, '0');
+      return (h ? `${pad(h)}:` : '') + `${pad(m)}:${pad(s)}.${pad(cs)}`;
+    }
+
+    function tick() {
+      elapsed = Date.now() - startTime;
+      display.textContent = fmt(elapsed);
+    }
+
+    function start() {
+      startTime = Date.now() - elapsed;
+      interval = setInterval(tick, 10);
+      running = true;
+      startBtn.textContent = '정지';
+      startBtn.classList.add('running');
+      lapBtn.disabled = false;
+    }
+
+    function stop() {
+      clearInterval(interval);
+      running = false;
+      startBtn.textContent = '계속';
+      startBtn.classList.remove('running');
+    }
+
+    function reset() {
+      clearInterval(interval);
+      running = false; elapsed = 0; lastLap = 0; laps = [];
+      display.textContent = '00:00.00';
+      startBtn.textContent = '시작';
+      startBtn.classList.remove('running');
+      lapBtn.disabled = true;
+      lapsEl.innerHTML = '';
+    }
+
+    function addLap() {
+      const split = elapsed - lastLap;
+      lastLap = elapsed;
+      laps.push({ total: elapsed, split });
+      renderLaps();
+    }
+
+    function renderLaps() {
+      const splits   = laps.map(l => l.split);
+      const minSplit = Math.min(...splits);
+      const maxSplit = Math.max(...splits);
+      lapsEl.innerHTML = '';
+      [...laps].reverse().forEach((lap, ri) => {
+        const num  = laps.length - ri;
+        const item = document.createElement('div');
+        item.className = 'lap-item';
+        if (laps.length > 1) {
+          if (lap.split === minSplit) item.classList.add('fastest');
+          else if (lap.split === maxSplit) item.classList.add('slowest');
+        }
+        item.innerHTML = `
+          <span class="lap-num">랩 ${num}</span>
+          <span class="lap-split">${fmt(lap.split)}</span>
+          <span class="lap-total">${fmt(lap.total)}</span>`;
+        lapsEl.appendChild(item);
+      });
+    }
+
+    startBtn.addEventListener('click', () => running ? stop() : start());
+    resetBtn.addEventListener('click', reset);
+    lapBtn.addEventListener('click', () => { if (running) addLap(); });
+  </script>
+</body>
+</html>
